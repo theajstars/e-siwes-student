@@ -1,0 +1,17 @@
+@import url("./Auth.css");
+@import url("./Colors.css");
+@import url("./Navbar.css");
+@import url("./Container.css");
+@import url("./Small.css");
+
+body {
+  margin: 0 auto;
+  padding: 0;
+}
+.flex-row {
+  display: flex;
+}
+.flex-column {
+  display: flex;
+  flex-direction: column;
+}
