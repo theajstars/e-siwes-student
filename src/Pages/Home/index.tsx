@@ -46,15 +46,15 @@ export default function Home() {
         <Routes>
           <Route>
             <Route path="/" element={<Dashboard />} />
-            <Route path="/supervisors" element={<Supervisors />} />
+            <Route path="/profile" element={<Profile />} />
+            {/* <Route path="/supervisors" element={<Supervisors />} />
             <Route
               path="/supervisors/:supervisorID"
               element={<SingleSupervisor />}
             />
             <Route path="/students" element={<Students />} />
             <Route path="/students/:studentID" element={<SingleStudent />} />
-            <Route path="/profile" element={<Profile />} />
-            <Route path="/notification" element={<Notification />} />
+            <Route path="/notification" element={<Notification />} /> */}
           </Route>
         </Routes>
       </Container>

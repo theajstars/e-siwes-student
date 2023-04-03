@@ -40,7 +40,7 @@ export const Login = () => {
       setFormSubmitting(false);
       console.log(response);
       if (response.data.auth) {
-        Cookies.set("admin_token", response.data.data);
+        Cookies.set("student_token", response.data.data);
         window.location.href = "/home";
       } else {
         addToast({

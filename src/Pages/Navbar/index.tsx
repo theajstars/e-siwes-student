@@ -63,7 +63,7 @@ export default function Navbar() {
             >
               Home
             </Link>
-            <Link
+            {/* <Link
               to="/home/students"
               className={`nav-item ${
                 activeItem === "Students" ? "nav-item-active" : ""
@@ -78,7 +78,7 @@ export default function Navbar() {
               }`}
             >
               Supervisors
-            </Link>
+            </Link> */}
             <Link
               to="/home/profile"
               className={`nav-item ${

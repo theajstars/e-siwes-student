@@ -70,7 +70,7 @@ export const Register = () => {
       setFormSubmitting(false);
       console.log(response);
       if (response.data.auth) {
-        Cookies.set("admin_token", response.data.data.token);
+        Cookies.set("admin_token", response.data.data);
         window.location.href = "/home";
       } else {
         const STUDENT_TOKEN_NOT_VALID =
@@ -159,7 +159,6 @@ export const Register = () => {
               variant="outline"
               value={Form.firstName}
               name="firstname"
-              maxLength={9}
               onChange={(e) => {
                 SetForm({ ...Form, firstName: e.target.value });
               }}

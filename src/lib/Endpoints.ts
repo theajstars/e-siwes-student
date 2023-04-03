@@ -6,7 +6,6 @@ enum Endpoints {
   ValidateAdminPassword = "/admin/password/validate",
   UpdateAdminPassword = "/admin/password/update",
   GetStudents = "/admin/students",
-  GetSingleStudent = "/student/profile/",
   GenerateStudentToken = "/admin/student/token/generate",
   GenerateSupervisorKey = "/admin/supervisor/key/generate",
   GetSupervisorProfiles = "/admin/supervisors",
@@ -21,5 +20,6 @@ enum Endpoints {
   StudentRegister = "/student/register",
   ValidateStudentToken = "/student/token/validate",
   StudentLogin = "/student/login",
+  GetSingleStudent = "/student/profile/",
 }
 export { Endpoints };
