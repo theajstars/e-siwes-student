@@ -1,6 +1,8 @@
 import { useState, useEffect } from "react";
-
+import { useNavigate } from "react-router-dom";
 import {
+  Alert,
+  AlertIcon,
   Button,
   Input,
   InputGroup,
@@ -17,13 +19,35 @@ import {
   Admin,
   AdminResponse,
   DefaultResponse,
+  SingleStudentResponse,
+  Student,
   ValidatePasswordResponse,
 } from "../../lib/ResponseTypes";
 import { Link } from "react-router-dom";
 
+import Cookies from "js-cookie";
 export default function Profile() {
+  const navigate = useNavigate();
+  const [studentProfile, setStudentProfile] = useState<Student>();
+
+  const getStudentProfile = async () => {
+    const studentResponse: SingleStudentResponse = await FetchData({
+      type: "GET",
+      route: Endpoints.GetSingleStudent.concat("currentIsStudent"),
+    });
+
+    if (studentResponse.data.auth) {
+      setStudentProfile(studentResponse.data.data);
+    } else {
+      Cookies.remove("student_token");
+      window.location.href = "/login";
+    }
+  };
+  useEffect(() => {
+    // Get Student Profile
+    getStudentProfile();
+  }, []);
   const addToast = useToast();
-  const [admin, setAdmin] = useState<Admin>();
   const [email, setEmail] = useState<string>("");
   const [confirmEmail, setConfirmEmail] = useState<string>("");
 
@@ -35,21 +59,10 @@ export default function Profile() {
   const [isEmailUpdating, setEmailUpdating] = useState<boolean>(false);
   const [isPasswordUpdating, setPasswordUpdating] = useState<boolean>(false);
 
-  const GetAdminDetails = async () => {
-    const adminDetails: AdminResponse = await FetchData({
-      route: Endpoints.GetAdminProfile,
-      type: "GET",
-    });
-    console.log(adminDetails);
-    if (adminDetails.data.auth) {
-      setAdmin(adminDetails.data.data);
-    }
-  };
-
-  const ValidateAdminPassword = async (passwordToValidate: string) => {
+  const ValidateStudentPassword = async (passwordToValidate: string) => {
     const validatePassword: ValidatePasswordResponse = await FetchData({
       type: "POST",
-      route: Endpoints.ValidateAdminPassword,
+      route: Endpoints.ValidateStudentPassword,
       data: { password: passwordToValidate },
     });
     return validatePassword.data.auth;
@@ -78,7 +91,7 @@ export default function Profile() {
       newPassword === confirmNewPassowrd
     ) {
       setPasswordUpdating(true);
-      const isPasswordValid = await ValidateAdminPassword(currentPassword);
+      const isPasswordValid = await ValidateStudentPassword(currentPassword);
       if (isPasswordValid) {
         const passwordUpdate: DefaultResponse = await FetchData({
           route: Endpoints.UpdateAdminPassword,
@@ -123,9 +136,9 @@ export default function Profile() {
       }
     }
     if (isEmailValid && email === confirmEmail) {
-      // Change admin email
+      // Change student email
       setEmailUpdating(true);
-      const isPasswordValid = await ValidateAdminPassword(password);
+      const isPasswordValid = await ValidateStudentPassword(password);
       if (isPasswordValid) {
         const emailUpdate: DefaultResponse = await FetchData({
           route: Endpoints.UpdateAdminEmail,
@@ -159,16 +172,16 @@ export default function Profile() {
       }
     }
   };
-
-  useEffect(() => {
-    GetAdminDetails();
-  }, []);
   return (
     <>
       <br />
       <br />
-      <Text size={"24px"}>Update Email</Text>
+      <Alert status="warning">
+        <AlertIcon />
+        You must complete your basic profile to gain access to the platform
+      </Alert>
       <br />
+      <Text size={"24px"}>Update Email</Text>
       <Stack spacing={45} direction="column">
         <Stack spacing={5} direction="column">
           <Input

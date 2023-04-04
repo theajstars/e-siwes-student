@@ -42,7 +42,12 @@ export default function Dashboard() {
       {studentProfile?.id ? (
         <Stack direction="column" spacing={20}>
           <div className=" flex-row dashboard-row">
-            <div className="dashboard-link">
+            <div
+              className="dashboard-link"
+              onClick={() => {
+                navigate("/home/profile");
+              }}
+            >
               <Stack
                 direction="column"
                 justifyContent="space-between"
@@ -58,14 +63,18 @@ export default function Dashboard() {
                     Profile
                   </Text>
                 </Stack>
-                <Link to="/home/profile">
-                  <Button colorScheme="whatsapp" width={"100%"}>
-                    View Profile
-                  </Button>
-                </Link>
+                <Button colorScheme="whatsapp" width={"100%"}>
+                  View Profile
+                </Button>
               </Stack>
             </div>
-            <div className="dashboard-link">
+            <div
+              className={`dashboard-link ${
+                studentProfile.isProfileComplete
+                  ? ""
+                  : "dashboard-link-disabled"
+              }`}
+            >
               <Stack
                 direction="column"
                 justifyContent="space-between"
@@ -81,16 +90,27 @@ export default function Dashboard() {
                     My Payments
                   </Text>
                 </Stack>
-                <Link to="/home/profile">
-                  <Button colorScheme="whatsapp" width={"100%"}>
-                    Payments
-                  </Button>
-                </Link>
+                <Button
+                  colorScheme="whatsapp"
+                  disabled={!studentProfile.isProfileComplete}
+                  cursor={
+                    studentProfile.isProfileComplete ? "pointer" : "not-allowed"
+                  }
+                  width={"100%"}
+                >
+                  Payments
+                </Button>
               </Stack>
             </div>
           </div>
           <div className=" flex-row dashboard-row">
-            <div className="dashboard-link">
+            <div
+              className={`dashboard-link ${
+                studentProfile.isProfileComplete
+                  ? ""
+                  : "dashboard-link-disabled"
+              }`}
+            >
               <Stack
                 direction="column"
                 justifyContent="space-between"
@@ -106,34 +126,17 @@ export default function Dashboard() {
                     Documents
                   </Text>
                 </Stack>
-                <Link to="/home/profile">
-                  <Button colorScheme="whatsapp" width={"100%"}>
-                    View Documents
-                  </Button>
-                </Link>
-              </Stack>
-            </div>
-            <div className="dashboard-link">
-              <Stack
-                direction="column"
-                justifyContent="space-between"
-                spacing={7}
-              >
-                <Stack direction="row" alignItems="center">
-                  <img
-                    src={MyPaymentsLinkIcon}
-                    alt=""
-                    className="dashboard-link-image"
-                  />
-                  <Text color="linkedin.400" fontSize={18}>
-                    My Payments
-                  </Text>
-                </Stack>
-                <Link to="/home/profile">
-                  <Button colorScheme="whatsapp" width={"100%"}>
-                    View Profile
-                  </Button>
-                </Link>
+
+                <Button
+                  colorScheme="whatsapp"
+                  disabled={!studentProfile.isProfileComplete}
+                  cursor={
+                    studentProfile.isProfileComplete ? "pointer" : "not-allowed"
+                  }
+                  width={"100%"}
+                >
+                  View Documents
+                </Button>
               </Stack>
             </div>
           </div>
