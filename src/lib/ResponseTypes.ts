@@ -5,6 +5,24 @@ import {
   InternalAxiosRequestConfig,
 } from "axios";
 
+export type CourseProgrammes =
+  | "computer_science"
+  | "cyber_security"
+  | "software_engineering"
+  | "information_technology";
+
+// export enum CourseProgrammes {
+//   ComputerScience = "computer_science",
+//   CyberSecurity = "cyber_security",
+//   SoftwareEngineering = "software_engineering",
+//   InformationTechnology = "information_technology",
+// }
+
+export type CourseProgrammesSelect = React.ChangeEvent<HTMLSelectElement> & {
+  target: {
+    value: CourseProgrammes;
+  };
+};
 export interface DefaultResponse<T = any, D = any> {
   data: {
     auth: boolean;
@@ -52,7 +70,8 @@ export interface Student {
     masterListNumber: string;
   };
   yearOfStudy: string;
-  courseOfStudy: string;
+  level: string;
+  courseOfStudy: CourseProgrammes;
   attachmentPeriod: string;
   company: {
     name: string;

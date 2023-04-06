@@ -22,6 +22,6 @@ enum Endpoints {
   StudentLogin = "/student/login",
   GetSingleStudent = "/student/profile/",
   ValidateStudentPassword = "/student/password/validate",
-  UpdateStudentEmail = "",
+  UpdateBasicStudentProfile = "/student/basic/profile/update",
 }
 export { Endpoints };

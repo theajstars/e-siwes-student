@@ -7,6 +7,7 @@ import {
   Input,
   InputGroup,
   InputLeftAddon,
+  Select,
   Stack,
   StackDivider,
   Text,
@@ -18,6 +19,8 @@ import { Endpoints } from "../../lib/Endpoints";
 import {
   Admin,
   AdminResponse,
+  CourseProgrammes,
+  CourseProgrammesSelect,
   DefaultResponse,
   SingleStudentResponse,
   Student,
@@ -28,7 +31,10 @@ import { Link } from "react-router-dom";
 import Cookies from "js-cookie";
 export default function Profile() {
   const navigate = useNavigate();
-  const [studentProfile, setStudentProfile] = useState<Student>();
+  const [student, setStudent] = useState<Student>();
+
+  const [isBasicProfileUpdating, setBasicProfileUpdating] =
+    useState<boolean>(false);
 
   const getStudentProfile = async () => {
     const studentResponse: SingleStudentResponse = await FetchData({
@@ -37,7 +43,7 @@ export default function Profile() {
     });
 
     if (studentResponse.data.auth) {
-      setStudentProfile(studentResponse.data.data);
+      setStudent(studentResponse.data.data);
     } else {
       Cookies.remove("student_token");
       window.location.href = "/login";
@@ -48,16 +54,6 @@ export default function Profile() {
     getStudentProfile();
   }, []);
   const addToast = useToast();
-  const [email, setEmail] = useState<string>("");
-  const [confirmEmail, setConfirmEmail] = useState<string>("");
-
-  const [currentPassword, setCurrentPassword] = useState<string>("");
-  const [password, setPassword] = useState<string>("");
-  const [newPassword, setNewPassword] = useState<string>("");
-  const [confirmNewPassowrd, setConfirmNewPassword] = useState<string>("");
-
-  const [isEmailUpdating, setEmailUpdating] = useState<boolean>(false);
-  const [isPasswordUpdating, setPasswordUpdating] = useState<boolean>(false);
 
   const ValidateStudentPassword = async (passwordToValidate: string) => {
     const validatePassword: ValidatePasswordResponse = await FetchData({
@@ -67,195 +63,191 @@ export default function Profile() {
     });
     return validatePassword.data.auth;
   };
-  const ChangePassword = async () => {
-    if (currentPassword.length === 0) {
-      addToast({
-        description: "Please provide your current password",
-        status: "warning",
-      });
-    } else if (newPassword.length < 7) {
-      addToast({
-        description: "Password must be at least 7 characters",
-        status: "warning",
-      });
-    } else if (newPassword !== confirmNewPassowrd) {
-      addToast({
-        description: "Passwords do not match!",
-        status: "warning",
-      });
-    }
 
-    if (
-      currentPassword.length > 0 &&
-      newPassword.length > 7 &&
-      newPassword === confirmNewPassowrd
-    ) {
-      setPasswordUpdating(true);
-      const isPasswordValid = await ValidateStudentPassword(currentPassword);
-      if (isPasswordValid) {
-        const passwordUpdate: DefaultResponse = await FetchData({
-          route: Endpoints.UpdateAdminPassword,
-          type: "POST",
-          data: { password: newPassword },
+  const SubmitBasicProfile = async () => {
+    if (student) {
+      const { firstName, lastName, email, phone, courseOfStudy, level } =
+        student;
+      const isEmailValid = validateEmail(email);
+
+      if (!firstName || !lastName || !phone || !courseOfStudy || !level) {
+        addToast({
+          description: "Please fill out the form!",
+          status: "warning",
         });
-        setPasswordUpdating(false);
-        if (passwordUpdate.data.auth) {
+      } else {
+        if (!isEmailValid) {
           addToast({
-            description: "Your password has been changed!",
-            status: "success",
-          });
-        } else {
-          addToast({
-            description: "There was an error changing your password!",
-            status: "error",
+            description: "Please provide a valid email!",
+            status: "warning",
           });
         }
-      } else {
-        setPasswordUpdating(false);
-        addToast({
-          description: "Password is not correct!",
-          status: "error",
-        });
       }
-    }
-  };
-
-  const ChangeEmail = async () => {
-    const isEmailValid = validateEmail(email);
-    if (!isEmailValid) {
-      addToast({
-        title: "Please enter a valid email!",
-        status: "warning",
-      });
-    } else {
-      if (email !== confirmEmail) {
-        addToast({
-          title: "Emails do not match!",
-          status: "error",
-        });
-      }
-    }
-    if (isEmailValid && email === confirmEmail) {
-      // Change student email
-      setEmailUpdating(true);
-      const isPasswordValid = await ValidateStudentPassword(password);
-      if (isPasswordValid) {
-        const emailUpdate: DefaultResponse = await FetchData({
-          route: Endpoints.UpdateAdminEmail,
+      if (
+        firstName &&
+        lastName &&
+        phone &&
+        courseOfStudy &&
+        level &&
+        isEmailValid
+      ) {
+        // All is good, update profile
+        setBasicProfileUpdating(true);
+        const UpdateBasicProfile: DefaultResponse = await FetchData({
+          route: Endpoints.UpdateBasicStudentProfile,
           type: "POST",
-          data: { newEmail: email },
+          data: {
+            email,
+            firstName,
+            lastName,
+            phone,
+            courseOfStudy,
+            level,
+          },
         }).catch(() => {
+          setBasicProfileUpdating(false);
           addToast({
-            description: "Some error occurred!",
             status: "error",
+            description: "An error occured! Please try again",
           });
-          setEmailUpdating(false);
         });
-        setEmailUpdating(false);
-        if (emailUpdate.data.auth) {
-          // Email has been changed
+        setBasicProfileUpdating(false);
+
+        if (UpdateBasicProfile.data.auth) {
           addToast({
-            description: "Your email has been changed!",
             status: "success",
+            description: "Your profile has been updated",
           });
+          getStudentProfile();
         } else {
           addToast({
-            description: "Some error occurred!",
             status: "error",
+            description: "An error occured! Please try again",
           });
         }
-      } else {
-        addToast({
-          title: "Password is not correct!",
-          status: "error",
-        });
       }
     }
   };
+
   return (
     <>
       <br />
       <br />
-      <Alert status="warning">
-        <AlertIcon />
-        You must complete your basic profile to gain access to the platform
-      </Alert>
-      <br />
-      <Text size={"24px"}>Update Email</Text>
-      <Stack spacing={45} direction="column">
-        <Stack spacing={5} direction="column">
-          <Input
-            type="text"
-            value={email}
-            onChange={(e) => setEmail(e.target.value)}
-            placeholder="New Email"
-            spellCheck={false}
-          />
-          <Input
-            type="text"
-            value={confirmEmail}
-            onChange={(e) => setConfirmEmail(e.target.value)}
-            placeholder="Confirm Email"
-            spellCheck={false}
-          />
-          <Input
-            type="password"
-            placeholder="Input password"
-            value={password}
-            onChange={(e) => setPassword(e.target.value)}
-          />
-
-          <Button
-            disabled={isEmailUpdating}
-            opacity={isEmailUpdating ? 0.5 : 1}
-            colorScheme={"linkedin"}
-            onClick={ChangeEmail}
-          >
-            Change Email &nbsp;{" "}
-            {isEmailUpdating && <i className="far fa-spinner-third fa-spin" />}
-          </Button>
-        </Stack>
-        <Stack spacing={5} direction="column">
-          <Stack spacing={5} direction="row" alignItems="center">
-            <Text size={"24px"}>Update Password</Text>
-            <a target="_blank" href="/reset">
-              <Text color="linkedin.400">
-                Reset Password <i className="far fa-external-link-alt" />
-              </Text>
-            </a>
+      {student?.id && (
+        <>
+          {!student.isProfileComplete && (
+            <>
+              <Alert status="warning">
+                <AlertIcon />
+                You must complete your basic profile to gain access to the
+                platform
+              </Alert>
+              <br />
+            </>
+          )}
+          <Stack direction="column" spacing={5}>
+            <Text size={"25px"}>Basic Profile</Text>
+            <Stack
+              direction="row"
+              alignItems="center"
+              justifyContent="space-between"
+            >
+              <Input
+                placeholder="First Name"
+                value={student.firstName}
+                onChange={(e) =>
+                  setStudent({ ...student, firstName: e.target.value })
+                }
+              />
+              <Input
+                placeholder="Last Name"
+                value={student.lastName}
+                onChange={(e) =>
+                  setStudent({ ...student, lastName: e.target.value })
+                }
+              />
+            </Stack>
+            <Stack
+              direction="row"
+              alignItems="center"
+              justifyContent="space-between"
+            >
+              <Input
+                placeholder="Email Address"
+                value={student.email}
+                onChange={(e) => {
+                  setStudent({ ...student, email: e.target.value });
+                }}
+              />
+              <Input
+                placeholder="Matric Number"
+                disabled
+                value={student.matricNumber}
+              />
+            </Stack>
+            <InputGroup>
+              <InputLeftAddon children="+234" />
+              <Input
+                variant="outline"
+                placeholder="Phone"
+                value={student.phone}
+                onChange={(e) => {
+                  setStudent({ ...student, phone: e.target.value });
+                }}
+                spellCheck={false}
+              />
+            </InputGroup>
+            <Stack
+              direction="row"
+              alignItems="center"
+              justifyContent="space-between"
+            >
+              <Select
+                placeholder="Current Level"
+                value={student.level}
+                onChange={(e) => {
+                  setStudent({
+                    ...student,
+                    level: e.target.value,
+                  });
+                }}
+              >
+                <option value="300">300 Level</option>
+                <option value="400">400 Level</option>
+              </Select>
+              <Select
+                placeholder="Course of Study"
+                value={student.courseOfStudy}
+                onChange={(
+                  e: React.ChangeEvent<HTMLSelectElement> & {
+                    target: { value: CourseProgrammes };
+                  }
+                ) => {
+                  setStudent({
+                    ...student,
+                    courseOfStudy: e.target.value,
+                  });
+                }}
+              >
+                <option value="computer_science">Computer Science</option>
+                <option value="cyber_security">Cyber Security</option>
+                <option value="software_engineering">
+                  Software Engineering
+                </option>
+                <option value="information_technology">
+                  Information Technology
+                </option>
+              </Select>
+            </Stack>
+            <Button colorScheme="linkedin" onClick={SubmitBasicProfile}>
+              Submit&nbsp;{" "}
+              {isBasicProfileUpdating && (
+                <i className="far fa-spinner-third fa-spin" />
+              )}
+            </Button>
           </Stack>
-
-          <Input
-            type="password"
-            placeholder="Current Password"
-            value={currentPassword}
-            onChange={(e) => setCurrentPassword(e.target.value)}
-          />
-          <Input
-            type="password"
-            placeholder="New Password"
-            value={newPassword}
-            onChange={(e) => setNewPassword(e.target.value)}
-          />
-          <Input
-            type="password"
-            placeholder="New Password"
-            value={confirmNewPassowrd}
-            onChange={(e) => setConfirmNewPassword(e.target.value)}
-          />
-          <Button
-            colorScheme={"linkedin"}
-            disabled={isPasswordUpdating}
-            opacity={isPasswordUpdating ? 0.5 : 1}
-            onClick={ChangePassword}
-          >
-            Change Password &nbsp;{" "}
-            {isPasswordUpdating && (
-              <i className="far fa-spinner-third fa-spin" />
-            )}
-          </Button>
-        </Stack>
-      </Stack>
+        </>
+      )}
     </>
   );
 }

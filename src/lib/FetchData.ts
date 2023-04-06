@@ -10,7 +10,11 @@ interface FetchDataParams {
 const token = Cookies.get("admin_token");
 
 const FetchData = async ({ type, route, data }: FetchDataParams) => {
-  if (!token && route !== Endpoints.AdminLogin) {
+  const NoTokenRequiredRoutes: string[] = [
+    Endpoints.StudentRegister,
+    Endpoints.StudentLogin,
+  ];
+  if (!token && !NoTokenRequiredRoutes.includes(route)) {
     return { auth: false };
   } else {
     const config: AxiosRequestConfig = {
