@@ -22,6 +22,7 @@ import Notification from "../Notification";
 import SingleSupervisor from "../SingleSupervisor";
 import SingleStudent from "../SingleStudent";
 import Payments from "../Payments";
+import Documents from "../Documents";
 export default function Home() {
   const navigate = useNavigate();
   useEffect(() => {
@@ -50,6 +51,7 @@ export default function Home() {
             <Route path="/" element={<Dashboard />} />
             <Route path="/profile" element={<Profile />} />
             <Route path="/payments" element={<Payments />} />
+            <Route path="/documents" element={<Documents />} />
             {/* <Route path="/supervisors" element={<Supervisors />} />
             <Route
               path="/supervisors/:supervisorID"

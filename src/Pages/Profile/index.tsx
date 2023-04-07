@@ -4,6 +4,7 @@ import {
   Alert,
   AlertIcon,
   Button,
+  Divider,
   Input,
   InputGroup,
   InputLeftAddon,
@@ -13,7 +14,7 @@ import {
   Text,
   useToast,
 } from "@chakra-ui/react";
-import { validateEmail } from "../../App";
+import { Banks, validateEmail } from "../../App";
 import { FetchData } from "../../lib/FetchData";
 import { Endpoints } from "../../lib/Endpoints";
 import {
@@ -130,6 +131,64 @@ export default function Profile() {
     }
   };
 
+  const [isAdvancedProfileSubmitting, setAdvancedProfileSubmitting] =
+    useState<boolean>(false);
+
+  const SubmitAdvancedProfile = async () => {
+    if (student) {
+      const { bankAccount, company, attachmentPeriod } = student;
+      const {
+        name: BankName,
+        number,
+        sortCode,
+        masterListNumber,
+      } = bankAccount;
+      const { name: CompanyName, address } = company;
+      console.log("Advanced Profile: ", {
+        BankName,
+        number,
+        sortCode,
+        masterListNumber,
+        CompanyName,
+        address,
+        attachmentPeriod,
+      });
+      const Profile = {
+        bankAccountName: BankName,
+        bankAccountNumber: number,
+        sortCode,
+        masterListNumber,
+        attachmentPeriod,
+        companyName: CompanyName,
+        companyAddress: address,
+      };
+
+      setAdvancedProfileSubmitting(true);
+      const AdvancedProfileUpdate: DefaultResponse = await FetchData({
+        route: Endpoints.UpdateAdvancedStudentProfile,
+        type: "POST",
+        data: Profile,
+      }).catch(() => {
+        setAdvancedProfileSubmitting(false);
+        addToast({
+          description: "An error occured",
+          status: "error",
+        });
+      });
+      setAdvancedProfileSubmitting(false);
+      if (AdvancedProfileUpdate.data.auth) {
+        addToast({
+          description: "Profile updated successfully!",
+          status: "success",
+        });
+      } else {
+        addToast({
+          description: "An error occured",
+          status: "error",
+        });
+      }
+    }
+  };
   return (
     <>
       <br />
@@ -138,7 +197,7 @@ export default function Profile() {
         <>
           {!student.isProfileComplete && (
             <>
-              <Alert status="warning">
+              <Alert status="warning" width="fit-content">
                 <AlertIcon />
                 You must complete your basic profile to gain access to the
                 platform
@@ -146,109 +205,247 @@ export default function Profile() {
               <br />
             </>
           )}
-          <Stack direction="column" spacing={5}>
-            <Text size={"25px"}>Basic Profile</Text>
-            <Stack
-              direction="row"
-              alignItems="center"
-              justifyContent="space-between"
-            >
-              <Input
-                placeholder="First Name"
-                value={student.firstName}
-                onChange={(e) =>
-                  setStudent({ ...student, firstName: e.target.value })
-                }
-              />
-              <Input
-                placeholder="Last Name"
-                value={student.lastName}
-                onChange={(e) =>
-                  setStudent({ ...student, lastName: e.target.value })
-                }
-              />
-            </Stack>
-            <Stack
-              direction="row"
-              alignItems="center"
-              justifyContent="space-between"
-            >
-              <Input
-                placeholder="Email Address"
-                value={student.email}
-                onChange={(e) => {
-                  setStudent({ ...student, email: e.target.value });
-                }}
-              />
-              <Input
-                placeholder="Matric Number"
-                disabled
-                value={student.matricNumber}
-              />
-            </Stack>
-            <InputGroup>
-              <InputLeftAddon children="+234" />
-              <Input
-                variant="outline"
-                placeholder="Phone"
-                value={student.phone}
-                onChange={(e) => {
-                  setStudent({ ...student, phone: e.target.value });
-                }}
-                spellCheck={false}
-              />
-            </InputGroup>
-            <Stack
-              direction="row"
-              alignItems="center"
-              justifyContent="space-between"
-            >
-              <Select
-                placeholder="Current Level"
-                value={student.level}
-                onChange={(e) => {
-                  setStudent({
-                    ...student,
-                    level: e.target.value,
-                  });
-                }}
+          <Stack direction="column" spacing={20}>
+            <Stack direction="column" spacing={5}>
+              <Text size={"25px"}>Basic Profile</Text>
+              <Stack
+                direction="row"
+                alignItems="center"
+                justifyContent="space-between"
               >
-                <option value="300">300 Level</option>
-                <option value="400">400 Level</option>
-              </Select>
-              <Select
-                placeholder="Course of Study"
-                value={student.courseOfStudy}
-                onChange={(
-                  e: React.ChangeEvent<HTMLSelectElement> & {
-                    target: { value: CourseProgrammes };
+                <Input
+                  placeholder="First Name"
+                  value={student.firstName}
+                  onChange={(e) =>
+                    setStudent({ ...student, firstName: e.target.value })
                   }
-                ) => {
+                />
+                <Input
+                  placeholder="Last Name"
+                  value={student.lastName}
+                  onChange={(e) =>
+                    setStudent({ ...student, lastName: e.target.value })
+                  }
+                />
+              </Stack>
+              <Stack
+                direction="row"
+                alignItems="center"
+                justifyContent="space-between"
+              >
+                <Input
+                  placeholder="Email Address"
+                  value={student.email}
+                  onChange={(e) => {
+                    setStudent({ ...student, email: e.target.value });
+                  }}
+                />
+                <Input
+                  placeholder="Matric Number"
+                  disabled
+                  value={student.matricNumber}
+                />
+              </Stack>
+              <InputGroup>
+                <InputLeftAddon children="+234" />
+                <Input
+                  variant="outline"
+                  placeholder="Phone"
+                  value={student.phone}
+                  onChange={(e) => {
+                    setStudent({ ...student, phone: e.target.value });
+                  }}
+                  spellCheck={false}
+                />
+              </InputGroup>
+              <Stack
+                direction="row"
+                alignItems="center"
+                justifyContent="space-between"
+              >
+                <Select
+                  placeholder="Current Level"
+                  value={student.level}
+                  onChange={(e) => {
+                    setStudent({
+                      ...student,
+                      level: e.target.value,
+                    });
+                  }}
+                >
+                  <option value="300">300 Level</option>
+                  <option value="400">400 Level</option>
+                </Select>
+                <Select
+                  placeholder="Course of Study"
+                  value={student.courseOfStudy}
+                  onChange={(
+                    e: React.ChangeEvent<HTMLSelectElement> & {
+                      target: { value: CourseProgrammes };
+                    }
+                  ) => {
+                    setStudent({
+                      ...student,
+                      courseOfStudy: e.target.value,
+                    });
+                  }}
+                >
+                  <option value="computer_science">Computer Science</option>
+                  <option value="cyber_security">Cyber Security</option>
+                  <option value="software_engineering">
+                    Software Engineering
+                  </option>
+                  <option value="information_technology">
+                    Information Technology
+                  </option>
+                </Select>
+              </Stack>
+              <Button colorScheme="linkedin" onClick={SubmitBasicProfile}>
+                Submit&nbsp;{" "}
+                {isBasicProfileUpdating && (
+                  <i className="far fa-spinner-third fa-spin" />
+                )}
+              </Button>
+            </Stack>
+            <Stack direction="column" spacing={5}>
+              <Alert status="warning" width="fit-content">
+                <AlertIcon />
+                Your advanced profile should only be completed at the beginning
+                of your internship period
+              </Alert>
+              <Text size={"25px"}>Advanced Profile</Text>
+              <Select
+                placeholder="Bank Name"
+                value={student.bankAccount.name}
+                onChange={(e) => {
                   setStudent({
                     ...student,
-                    courseOfStudy: e.target.value,
+                    bankAccount: {
+                      ...student.bankAccount,
+                      name: e.target.value,
+                    },
                   });
                 }}
               >
-                <option value="computer_science">Computer Science</option>
-                <option value="cyber_security">Cyber Security</option>
-                <option value="software_engineering">
-                  Software Engineering
-                </option>
-                <option value="information_technology">
-                  Information Technology
-                </option>
+                {Banks.map((bank) => {
+                  return <option value={bank.id}>{bank.name}</option>;
+                })}
               </Select>
+              <Stack
+                direction="row"
+                alignItems="center"
+                justifyContent="space-between"
+              >
+                <Input
+                  placeholder="Account Number"
+                  value={student.bankAccount.number}
+                  maxLength={10}
+                  onChange={(e) =>
+                    setStudent({
+                      ...student,
+                      bankAccount: {
+                        ...student.bankAccount,
+                        number: e.target.value,
+                      },
+                    })
+                  }
+                />
+                <Input
+                  placeholder="Sort Code"
+                  value={student.bankAccount.sortCode}
+                  onChange={(e) =>
+                    setStudent({
+                      ...student,
+                      bankAccount: {
+                        ...student.bankAccount,
+                        sortCode: e.target.value,
+                      },
+                    })
+                  }
+                />
+                <Input
+                  placeholder="Master List Number"
+                  value={student.bankAccount.masterListNumber}
+                  onChange={(e) =>
+                    setStudent({
+                      ...student,
+                      bankAccount: {
+                        ...student.bankAccount,
+                        masterListNumber: e.target.value,
+                      },
+                    })
+                  }
+                />
+              </Stack>
+              <Stack
+                direction="row"
+                alignItems="center"
+                justifyContent="space-between"
+              >
+                <Input
+                  placeholder="Company Name"
+                  value={student.company.name}
+                  onChange={(e) =>
+                    setStudent({
+                      ...student,
+                      company: {
+                        ...student.company,
+                        name: e.target.value,
+                      },
+                    })
+                  }
+                />
+                <Input
+                  placeholder="Company Address"
+                  value={student.company.address}
+                  onChange={(e) =>
+                    setStudent({
+                      ...student,
+                      company: {
+                        ...student.company,
+                        address: e.target.value,
+                      },
+                    })
+                  }
+                />
+              </Stack>
+
+              <Stack
+                direction="row"
+                alignItems="center"
+                justifyContent="space-between"
+              >
+                <Select
+                  placeholder="Attachment Period"
+                  value={student.attachmentPeriod}
+                  onChange={(e) => {
+                    setStudent({
+                      ...student,
+                      attachmentPeriod: e.target.value,
+                    });
+                  }}
+                >
+                  <option value="3">3 Months</option>
+                  <option value="4">4 Months</option>
+                  <option value="5">5 Months</option>
+                  <option value="6">6 Months</option>
+                  <option value="7">7 Months</option>
+                  <option value="8">8 Months</option>
+                </Select>
+              </Stack>
+              <Button colorScheme="linkedin" onClick={SubmitAdvancedProfile}>
+                Submit&nbsp;{" "}
+                {isAdvancedProfileSubmitting && (
+                  <i className="far fa-spinner-third fa-spin" />
+                )}
+              </Button>
             </Stack>
-            <Button colorScheme="linkedin" onClick={SubmitBasicProfile}>
-              Submit&nbsp;{" "}
-              {isBasicProfileUpdating && (
-                <i className="far fa-spinner-third fa-spin" />
-              )}
-            </Button>
           </Stack>
         </>
       )}
+      <br />
+      <br />
+      <br />
     </>
   );
 }

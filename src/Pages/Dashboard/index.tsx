@@ -16,9 +16,11 @@ import ProfileLinkIcon from "../../Assets/IMG/ProfileLinkIcon.png";
 import MyPaymentsLinkIcon from "../../Assets/IMG/MyPaymentsLinkIcon.png";
 import DocumentLinkIcon from "../../Assets/IMG/DocumentLinkIcon.png";
 
-import { Text, Button, Stack } from "@chakra-ui/react";
+import { Text, Button, Stack, useToast } from "@chakra-ui/react";
 import MegaLoader from "../MegaLoader";
+
 export default function Dashboard() {
+  const addToast = useToast();
   const navigate = useNavigate();
   const [studentProfile, setStudentProfile] = useState<Student>();
   useEffect(() => {
@@ -115,6 +117,25 @@ export default function Dashboard() {
                   ? ""
                   : "dashboard-link-disabled"
               }`}
+              onClick={() => {
+                if (studentProfile.isProfileComplete) {
+                  if (studentProfile.hasPaid) {
+                    navigate("/home/documents");
+                  } else {
+                    navigate("/home/payments");
+                    addToast({
+                      description: "You must make SIWES payment first",
+                      status: "warning",
+                    });
+                  }
+                } else {
+                  addToast({
+                    description: "You must complete your profile first",
+                    status: "warning",
+                  });
+                  navigate("/home/profile");
+                }
+              }}
             >
               <Stack
                 direction="column"

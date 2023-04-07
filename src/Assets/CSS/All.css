@@ -9,6 +9,7 @@
 body {
   margin: 0 auto;
   padding: 0;
+  overflow-x: clip !important;
 }
 .flex-row {
   display: flex;
