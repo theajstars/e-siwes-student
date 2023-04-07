@@ -8,7 +8,7 @@ import {
   StudentResponse,
   Supervisor,
   SupervisorResponse,
-  ValidateAdminResponse,
+  ValidateStudentAuthResponse,
 } from "../../lib/ResponseTypes";
 import Container from "../Container";
 import Navbar from "../Navbar";
@@ -21,17 +21,19 @@ import Cookies from "js-cookie";
 import Notification from "../Notification";
 import SingleSupervisor from "../SingleSupervisor";
 import SingleStudent from "../SingleStudent";
+import Payments from "../Payments";
 export default function Home() {
   const navigate = useNavigate();
   useEffect(() => {
-    const adminToken = Cookies.get("admin_token");
-    if (!adminToken) {
+    const studentToken = Cookies.get("student_token");
+    if (!studentToken) {
       navigate("/login");
     } else {
       FetchData({
         type: "GET",
-        route: Endpoints.ValidateAdminToken,
-      }).then((res: ValidateAdminResponse) => {
+        route: Endpoints.ValidateStudentAuth,
+      }).then((res: ValidateStudentAuthResponse) => {
+        console.log("Auth response: ", res);
         const { auth } = res.data;
         if (!auth) {
           navigate("/login");
@@ -47,6 +49,7 @@ export default function Home() {
           <Route>
             <Route path="/" element={<Dashboard />} />
             <Route path="/profile" element={<Profile />} />
+            <Route path="/payments" element={<Payments />} />
             {/* <Route path="/supervisors" element={<Supervisors />} />
             <Route
               path="/supervisors/:supervisorID"

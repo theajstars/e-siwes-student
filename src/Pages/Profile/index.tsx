@@ -42,6 +42,7 @@ export default function Profile() {
       route: Endpoints.GetSingleStudent.concat("currentIsStudent"),
     });
 
+    console.log("Profile response", studentResponse);
     if (studentResponse.data.auth) {
       setStudent(studentResponse.data.data);
     } else {

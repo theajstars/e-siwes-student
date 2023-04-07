@@ -25,7 +25,7 @@ export default function Navbar() {
   }, [location]);
 
   const logout = () => {
-    Cookies.remove("admin_token");
+    Cookies.remove("student_token");
     window.location.href = "/login";
   };
 

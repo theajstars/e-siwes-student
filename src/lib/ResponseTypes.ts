@@ -43,10 +43,10 @@ export interface LoginResponse extends Omit<DefaultResponse, "data"> {
   };
 }
 
-export interface ValidateAdminResponse extends Omit<DefaultResponse, "data"> {
+export interface ValidateStudentAuthResponse
+  extends Omit<DefaultResponse, "data"> {
   data: {
     auth: boolean;
-    data?: Supervisor[] | [];
     message?: string;
   };
 }
@@ -147,6 +147,22 @@ export interface ValidatePasswordResponse
   extends Omit<DefaultResponse, "data"> {
   data: {
     auth: boolean;
+    message?: string;
+  };
+}
+
+export interface Receipt {
+  id: string;
+  studentID: string;
+  date: number;
+  amount: number;
+  paid: boolean;
+}
+
+export interface ReceiptsResponse extends Omit<DefaultResponse, "data"> {
+  data: {
+    auth: boolean;
+    data: Receipt[] | [];
     message?: string;
   };
 }

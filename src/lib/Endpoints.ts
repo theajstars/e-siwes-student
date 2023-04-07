@@ -19,9 +19,12 @@ enum Endpoints {
 
   StudentRegister = "/student/register",
   ValidateStudentToken = "/student/token/validate",
+  ValidateStudentAuth = "/student/auth/validate",
   StudentLogin = "/student/login",
   GetSingleStudent = "/student/profile/",
   ValidateStudentPassword = "/student/password/validate",
   UpdateBasicStudentProfile = "/student/basic/profile/update",
+  GetStudentReceipts = "/student/receipts",
+  ConfirmStudentPayment = "/student/payment/confirm",
 }
 export { Endpoints };

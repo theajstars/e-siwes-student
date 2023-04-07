@@ -23,12 +23,12 @@ export const Login = () => {
     password: "",
   });
 
-  const loginAdmin = async (e: any) => {
+  const loginStudent = async (e: any) => {
     if (Form.email.length > 0 && Form.password.length > 0) {
       e.preventDefault();
       setFormSubmitting(true);
       const response: LoginResponse = await FetchData({
-        route: Endpoints.AdminLogin,
+        route: Endpoints.StudentLogin,
         type: "POST",
         data: Form,
       }).catch(() => {
@@ -54,7 +54,7 @@ export const Login = () => {
     <div className="auth-container flex-column">
       <img src={Logo} alt="" className="login-image" />
       <br />
-      <form action="#" onSubmit={(e) => loginAdmin(e)}>
+      <form action="#" onSubmit={(e) => loginStudent(e)}>
         <div className="login-form flex-column">
           <Text fontSize="2xl">Login</Text>
           <Input
@@ -63,7 +63,7 @@ export const Login = () => {
             onChange={(e) => {
               SetForm({ ...Form, email: e.target.value });
             }}
-            placeholder="Email or Matric Number"
+            placeholder="Matric Number"
             spellCheck={false}
           />
           <Input

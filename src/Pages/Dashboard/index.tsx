@@ -74,6 +74,11 @@ export default function Dashboard() {
                   ? ""
                   : "dashboard-link-disabled"
               }`}
+              onClick={() => {
+                if (studentProfile.isProfileComplete) {
+                  navigate("/home/payments");
+                }
+              }}
             >
               <Stack
                 direction="column"
