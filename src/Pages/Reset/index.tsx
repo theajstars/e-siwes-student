@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-
+import { useNavigate } from "react-router-dom";
 import { Button, Input, Stack, Text, useToast } from "@chakra-ui/react";
 import { validateEmail } from "../../App";
 import { FetchData } from "../../lib/FetchData";
@@ -15,6 +15,7 @@ type ResetPasswordType = {
 };
 const Reset = () => {
   const addToast = useToast();
+  const navigate = useNavigate();
   const [isFormSubmitting, setFormSubmitting] = useState<boolean>(false);
   const [isCodeResending, setCodeResending] = useState<boolean>(false);
   const [Form, SetForm] = useState<ResetPasswordType>({
@@ -65,15 +66,15 @@ const Reset = () => {
       const VerifyCode: DefaultResponse = await FetchData({
         type: "POST",
         route: Endpoints.VerifyResetToken,
-        data: { email: Form.email, type: "admin", code: Form.code },
+        data: { email: Form.email, type: "student", code: Form.code },
       }).catch(() => setFormSubmitting(false));
       console.log(VerifyCode);
       if (VerifyCode.data.auth) {
         // We are a go, Update Password
         const UpdatePassword: DefaultResponse = await FetchData({
           type: "POST",
-          route: Endpoints.UpdateAdminPassword,
-          data: { password: Form.password },
+          route: Endpoints.ForceUpdateStudentPassword,
+          data: { password: Form.password, email: Form.email },
         });
         console.log(UpdatePassword);
         if (UpdatePassword.data.auth) {
@@ -81,6 +82,7 @@ const Reset = () => {
             description: "Your password has been changed!",
             status: "success",
           });
+          navigate("/login");
         } else {
           addToast({
             description: "An error occured. Please try again",
@@ -107,7 +109,7 @@ const Reset = () => {
       const sendNewToken: DefaultResponse = await FetchData({
         route: Endpoints.SendResetToken,
         type: "POST",
-        data: { type: "admin", email: Form.email },
+        data: { type: "student", email: Form.email },
       }).catch((e: AxiosError) => {
         setCodeResending(false);
         if (e.response?.status === 401) {
@@ -129,7 +131,7 @@ const Reset = () => {
   };
 
   return (
-    <div className="login-container flex-column">
+    <div className="auth-container login-container flex-column">
       <form action="#" onSubmit={(e) => resetPassword(e)}>
         <div className="login-form flex-column">
           <Text fontSize="2xl">Reset Password</Text>

@@ -30,9 +30,15 @@ import {
 import { Link } from "react-router-dom";
 
 import Cookies from "js-cookie";
+import MegaLoader from "../MegaLoader";
 export default function Profile() {
   const navigate = useNavigate();
   const [student, setStudent] = useState<Student>();
+  const [currentPassword, setCurrentPassword] = useState<string>("");
+  const [newPassword, setNewPassword] = useState<string>("");
+  const [confirmNewPassword, setConfirmNewPassword] = useState<string>("");
+
+  const [isPasswordUpdating, setPasswordUpdating] = useState<boolean>(false);
 
   const [isBasicProfileUpdating, setBasicProfileUpdating] =
     useState<boolean>(false);
@@ -66,6 +72,55 @@ export default function Profile() {
     return validatePassword.data.auth;
   };
 
+  const UpdatePassword = async () => {
+    if (
+      currentPassword.length === 0 ||
+      newPassword.length === 0 ||
+      confirmNewPassword.length === 0
+    ) {
+      addToast({ status: "error", description: "Please fill out the form" });
+    } else {
+      if (newPassword !== confirmNewPassword) {
+        addToast({ status: "warning", description: "Passwords do not match" });
+      } else {
+        setPasswordUpdating(true);
+        const isCurrentPasswordValid = await ValidateStudentPassword(
+          currentPassword
+        );
+        if (!isCurrentPasswordValid) {
+          setPasswordUpdating(false);
+
+          addToast({
+            status: "error",
+            description: "Password is incorrect",
+          });
+        } else {
+          const UpdateRequest: DefaultResponse = await FetchData({
+            route: Endpoints.UpdateStudentPassword,
+            type: "POST",
+            data: { password: newPassword },
+          }).catch(() => {
+            addToast({
+              description: "An error occurred",
+              status: "error",
+            });
+          });
+          setPasswordUpdating(false);
+          if (UpdateRequest.data.auth) {
+            addToast({
+              description: "Password updated successfully!",
+              status: "success",
+            });
+          } else {
+            addToast({
+              description: "An error occurred",
+              status: "error",
+            });
+          }
+        }
+      }
+    }
+  };
   const SubmitBasicProfile = async () => {
     if (student) {
       const { firstName, lastName, email, phone, courseOfStudy, level } =
@@ -193,7 +248,7 @@ export default function Profile() {
     <>
       <br />
       <br />
-      {student?.id && (
+      {student?.id ? (
         <>
           {!student.isProfileComplete && (
             <>
@@ -440,8 +495,51 @@ export default function Profile() {
                 )}
               </Button>
             </Stack>
+            <Stack direction="column" spacing={5}>
+              <Text size={"25px"}>Update Password</Text>
+
+              <Input
+                placeholder="Current Password"
+                value={currentPassword}
+                type="password"
+                onChange={(e) => {
+                  setCurrentPassword(e.target.value);
+                }}
+              />
+              <Stack
+                direction="row"
+                alignItems="center"
+                justifyContent="space-between"
+              >
+                <Input
+                  placeholder="New Password"
+                  value={newPassword}
+                  type="password"
+                  onChange={(e) => {
+                    setNewPassword(e.target.value);
+                  }}
+                />
+                <Input
+                  placeholder="Re-enter Password"
+                  value={confirmNewPassword}
+                  type="password"
+                  onChange={(e) => {
+                    setConfirmNewPassword(e.target.value);
+                  }}
+                />
+              </Stack>
+
+              <Button colorScheme="linkedin" onClick={UpdatePassword}>
+                Submit&nbsp;{" "}
+                {isPasswordUpdating && (
+                  <i className="far fa-spinner-third fa-spin" />
+                )}
+              </Button>
+            </Stack>
           </Stack>
         </>
+      ) : (
+        <MegaLoader />
       )}
       <br />
       <br />

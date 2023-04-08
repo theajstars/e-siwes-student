@@ -13,6 +13,9 @@ const FetchData = async ({ type, route, data }: FetchDataParams) => {
   const NoTokenRequiredRoutes: string[] = [
     Endpoints.StudentRegister,
     Endpoints.StudentLogin,
+    Endpoints.SendResetToken,
+    Endpoints.VerifyResetToken,
+    Endpoints.ForceUpdateStudentPassword,
   ];
   if (!token && !NoTokenRequiredRoutes.includes(route)) {
     return { auth: false };

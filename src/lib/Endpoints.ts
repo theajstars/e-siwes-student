@@ -23,6 +23,8 @@ enum Endpoints {
   StudentLogin = "/student/login",
   GetSingleStudent = "/student/profile/",
   ValidateStudentPassword = "/student/password/validate",
+  UpdateStudentPassword = "/student/password/update",
+  ForceUpdateStudentPassword = "/student/password/update/force",
   UpdateBasicStudentProfile = "/student/basic/profile/update",
   UpdateAdvancedStudentProfile = "/student/advanced/profile/update",
   GetStudentReceipts = "/student/receipts",

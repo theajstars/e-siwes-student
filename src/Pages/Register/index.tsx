@@ -249,6 +249,12 @@ export const Register = () => {
           <Link to="/login">Login</Link>
         </Text>
       </Stack>
+      <Stack direction="row" marginTop={4}>
+        <Text>Forgot Password?</Text>
+        <Text color="linkedin.400">
+          <Link to="/reset">Reset</Link>
+        </Text>
+      </Stack>
     </div>
   );
 };
