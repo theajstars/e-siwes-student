@@ -10,6 +10,7 @@ import {
   Stack,
   InputGroup,
   InputLeftAddon,
+  Select,
 } from "@chakra-ui/react";
 import Logo from "../../Assets/IMG/Logo.png";
 import { AxiosResponse } from "axios";
@@ -19,33 +20,41 @@ import { DefaultResponse, LoginResponse } from "../../lib/ResponseTypes";
 import Cookies from "js-cookie";
 import { validateEmail } from "../../App";
 
-type RegisterFormType = {
-  token: string;
+type Colleges = "COLNAS" | "COSMAS";
+interface RegisterFormType {
   email: string;
   firstName: string;
   lastName: string;
   phone: string;
   matricNumber: string;
   password: string;
-};
+  college: Colleges;
+}
 export const Register = () => {
   const navigate = useNavigate();
   const addToast = useToast();
   const [isFormSubmitting, setFormSubmitting] = useState<boolean>(false);
   const [Form, SetForm] = useState<RegisterFormType>({
-    token: "",
     email: "",
     password: "",
     phone: "",
     firstName: "",
     lastName: "",
     matricNumber: "",
+    college: "COLNAS",
   });
 
-  const registerStudent = async (e: any) => {
+  const RegisterStudent = async (e: any) => {
     e.preventDefault();
-    const { firstName, lastName, email, password, matricNumber, phone, token } =
-      Form;
+    const {
+      firstName,
+      lastName,
+      email,
+      password,
+      matricNumber,
+      phone,
+      college,
+    } = Form;
     const isEmailValid = validateEmail(email);
     if (
       isEmailValid &&
@@ -53,8 +62,8 @@ export const Register = () => {
       firstName.length > 0 &&
       password.length >= 7 &&
       matricNumber.length === 9 &&
-      phone.length === 10 &&
-      token.length === 16
+      college.length > 0 &&
+      phone.length === 10
     ) {
       setFormSubmitting(true);
       const response: DefaultResponse = await FetchData({
@@ -73,26 +82,9 @@ export const Register = () => {
         Cookies.set("student_token", response.data.data);
         window.location.href = "/home";
       } else {
-        const STUDENT_TOKEN_NOT_VALID =
-          "Student Token is not valid".toLowerCase();
-        const STUDENT_TOKEN_IS_EXPIRED = "Token is expired".toLowerCase();
         const STUDENT_ALREADY_EXISTS = "Student already exists".toLowerCase();
 
-        if (response.data.message.toLowerCase() === STUDENT_TOKEN_NOT_VALID) {
-          addToast({
-            title: "Your token is invalid! Please try again",
-            status: "error",
-          });
-        } else if (
-          response.data.message.toLowerCase() === STUDENT_TOKEN_IS_EXPIRED
-        ) {
-          addToast({
-            title: "Your token is expired!",
-            status: "error",
-          });
-        } else if (
-          response.data.message.toLowerCase() === STUDENT_ALREADY_EXISTS
-        ) {
+        if (response.data.message.toLowerCase() === STUDENT_ALREADY_EXISTS) {
           addToast({
             title: "Student already exists!",
             status: "error",
@@ -128,13 +120,6 @@ export const Register = () => {
                 title: "Your password must be at least 7 characters",
                 status: "warning",
               });
-            } else {
-              if (token.length !== 16) {
-                addToast({
-                  description: "Please enter a valid token",
-                  status: "error",
-                });
-              }
             }
           }
         }
@@ -145,7 +130,7 @@ export const Register = () => {
     <div className="auth-container flex-column">
       <img src={Logo} alt="" className="login-image" />
       <br />
-      <form action="#" onSubmit={(e) => registerStudent(e)}>
+      <form action="#" onSubmit={(e) => RegisterStudent(e)}>
         <div className="register-form flex-column">
           <Text fontSize="2xl">Register</Text>
           <Stack
@@ -220,17 +205,17 @@ export const Register = () => {
             placeholder="Password"
             type={"password"}
           />
-          <Input
-            variant="outline"
-            value={Form.token}
-            textTransform="uppercase"
+          <Select
+            placeholder="Select option"
+            value={Form.college}
             onChange={(e) => {
-              SetForm({ ...Form, token: e.target.value });
+              SetForm({ ...Form, college: e.target.value as Colleges });
             }}
-            placeholder="Student Token"
-            spellCheck={false}
-            maxLength={16}
-          />
+          >
+            <option value="COSMAS">COSMAS</option>
+            <option value="COLNAS">COLNAS</option>
+          </Select>
+
           <Button
             type="submit"
             colorScheme="linkedin"

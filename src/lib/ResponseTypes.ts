@@ -47,6 +47,10 @@ export interface ValidateStudentAuthResponse
   extends Omit<DefaultResponse, "data"> {
   data: {
     auth: boolean;
+    data: {
+      isProfileComplete: boolean;
+      isAuthenticated: boolean;
+    };
     message?: string;
   };
 }
