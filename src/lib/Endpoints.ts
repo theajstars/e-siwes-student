@@ -29,5 +29,6 @@ enum Endpoints {
   UpdateAdvancedStudentProfile = "/student/advanced/profile/update",
   GetStudentReceipts = "/student/receipts",
   ConfirmStudentPayment = "/student/payment/confirm",
+  GetAvailableCourses = "/student/courses/get",
 }
 export { Endpoints };

@@ -16,11 +16,14 @@ import Logo from "../../Assets/IMG/Logo.png";
 import { AxiosResponse } from "axios";
 import { FetchData } from "../../lib/FetchData";
 import { Endpoints } from "../../lib/Endpoints";
-import { DefaultResponse, LoginResponse } from "../../lib/ResponseTypes";
+import {
+  Colleges,
+  DefaultResponse,
+  LoginResponse,
+} from "../../lib/ResponseTypes";
 import Cookies from "js-cookie";
 import { validateEmail } from "../../App";
 
-type Colleges = "COLNAS" | "COSMAS";
 interface RegisterFormType {
   email: string;
   firstName: string;
@@ -28,6 +31,7 @@ interface RegisterFormType {
   phone: string;
   matricNumber: string;
   password: string;
+  confirmPassword: string;
   college: Colleges;
 }
 export const Register = () => {
@@ -37,6 +41,7 @@ export const Register = () => {
   const [Form, SetForm] = useState<RegisterFormType>({
     email: "",
     password: "",
+    confirmPassword: "",
     phone: "",
     firstName: "",
     lastName: "",
@@ -51,6 +56,7 @@ export const Register = () => {
       lastName,
       email,
       password,
+      confirmPassword,
       matricNumber,
       phone,
       college,
@@ -61,6 +67,7 @@ export const Register = () => {
       lastName.length > 0 &&
       firstName.length > 0 &&
       password.length >= 7 &&
+      password === confirmPassword &&
       matricNumber.length === 9 &&
       college.length > 0 &&
       phone.length === 10
@@ -120,6 +127,13 @@ export const Register = () => {
                 title: "Your password must be at least 7 characters",
                 status: "warning",
               });
+            } else {
+              if (password !== confirmPassword) {
+                addToast({
+                  title: "Your passwords do not match",
+                  status: "warning",
+                });
+              }
             }
           }
         }
@@ -196,15 +210,26 @@ export const Register = () => {
               />
             </InputGroup>
           </Stack>
-          <Input
-            variant="outline"
-            value={Form.password}
-            onChange={(e) => {
-              SetForm({ ...Form, password: e.target.value });
-            }}
-            placeholder="Password"
-            type={"password"}
-          />
+          <Stack direction="row" width="100%" justifyContent="space-between">
+            <Input
+              variant="outline"
+              value={Form.password}
+              onChange={(e) => {
+                SetForm({ ...Form, password: e.target.value });
+              }}
+              placeholder="Password"
+              type={"password"}
+            />
+            <Input
+              variant="outline"
+              value={Form.confirmPassword}
+              onChange={(e) => {
+                SetForm({ ...Form, confirmPassword: e.target.value });
+              }}
+              placeholder="Confirm Password"
+              type={"password"}
+            />
+          </Stack>
           <Select
             placeholder="Select option"
             value={Form.college}
@@ -214,6 +239,7 @@ export const Register = () => {
           >
             <option value="COSMAS">COSMAS</option>
             <option value="COLNAS">COLNAS</option>
+            <option value="COLMED">COLMED</option>
           </Select>
 
           <Button

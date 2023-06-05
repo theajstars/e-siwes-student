@@ -25,7 +25,9 @@ import {
   DefaultResponse,
   SingleStudentResponse,
   Student,
+  Course,
   ValidatePasswordResponse,
+  CoursesResponse,
 } from "../../lib/ResponseTypes";
 import { Link } from "react-router-dom";
 
@@ -43,6 +45,8 @@ export default function Profile() {
   const [isBasicProfileUpdating, setBasicProfileUpdating] =
     useState<boolean>(false);
 
+  const [availableCourses, setAvailableCourses] = useState<Course[]>([]);
+
   const getStudentProfile = async () => {
     const studentResponse: SingleStudentResponse = await FetchData({
       type: "GET",
@@ -52,14 +56,23 @@ export default function Profile() {
     console.log("Profile response", studentResponse);
     if (studentResponse.data.auth) {
       setStudent(studentResponse.data.data);
+      const r: CoursesResponse = await FetchData({
+        route: Endpoints.GetAvailableCourses,
+        type: "POST",
+        data: { college: studentResponse.data.data?.college },
+      });
+      console.log("Available Courses", r);
+      setAvailableCourses(r.data.data);
     } else {
       Cookies.remove("student_token");
       window.location.href = "/login";
     }
   };
+
   useEffect(() => {
     // Get Student Profile
     getStudentProfile();
+    // getAvailableCourses()
   }, []);
   const addToast = useToast();
 
@@ -121,6 +134,7 @@ export default function Profile() {
       }
     }
   };
+
   const SubmitBasicProfile = async () => {
     if (student) {
       const { firstName, lastName, email, phone, courseOfStudy, level } =
@@ -345,14 +359,9 @@ export default function Profile() {
                     });
                   }}
                 >
-                  <option value="computer_science">Computer Science</option>
-                  <option value="cyber_security">Cyber Security</option>
-                  <option value="software_engineering">
-                    Software Engineering
-                  </option>
-                  <option value="information_technology">
-                    Information Technology
-                  </option>
+                  {availableCourses.map((course) => {
+                    return <option value={course.name}>{course.name}</option>;
+                  })}
                 </Select>
               </Stack>
               <Button colorScheme="linkedin" onClick={SubmitBasicProfile}>

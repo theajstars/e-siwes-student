@@ -1,12 +1,13 @@
 import { Stack, Card, CardBody, Text, Button, Heading } from "@chakra-ui/react";
 import ScafForm from "../../Assets/Documents/scaf_form.pdf";
-import Form8 from "../../Assets/Documents/scaf_form.pdf";
+import Form8 from "../../Assets/Documents/form_8.pdf";
+import FormA from "../../Assets/Documents/form_a.pdf";
 export default function Documents() {
   console.log(ScafForm);
 
-  const downloadDoc = (doc: "scaf" | "form8") => {
+  const downloadDoc = (doc: "scaf" | "form8" | "FormA") => {
     const a = document.createElement("a");
-    a.href = doc === "scaf" ? ScafForm : Form8;
+    a.href = doc === "scaf" ? ScafForm : doc === "form8" ? Form8 : FormA;
     a.click();
   };
   return (
@@ -18,20 +19,18 @@ export default function Documents() {
           direction={{ base: "column", sm: "row" }}
           overflow="hidden"
           variant="outline"
+          minWidth={"350px"}
         >
           <Stack>
             <CardBody>
               <Stack direction="column" spacing={5}>
                 <Heading size="md">Form 8</Heading>
-                <Text>
-                  Form 8 is a lorem ipsum sit dolor amet Form 8 is a lorem ipsum
-                  sit dolor amet Form 8 is a lorem ipsum sit dolor amet
-                </Text>
+                <Text>Download Form 8</Text>
                 <Button
                   variant="solid"
                   colorScheme="blue"
                   width={200}
-                  onClick={() => downloadDoc("scaf")}
+                  onClick={() => downloadDoc("form8")}
                 >
                   Download Now
                 </Button>
@@ -43,17 +42,22 @@ export default function Documents() {
           direction={{ base: "column", sm: "row" }}
           overflow="hidden"
           variant="outline"
+          minWidth={"350px"}
         >
           <Stack>
             <CardBody>
               <Stack direction="column" spacing={5}>
                 <Heading size="md">SCAF Form</Heading>
 
-                <Text>
-                  Form 8 is a lorem ipsum sit dolor amet Form 8 is a lorem ipsum
-                  sit dolor amet Form 8 is a lorem ipsum sit dolor amet
-                </Text>
-                <Button variant="solid" colorScheme="blue" width={200}>
+                <Text>Download SCAF Form</Text>
+                <Button
+                  variant="solid"
+                  colorScheme="blue"
+                  width={200}
+                  onClick={() => {
+                    downloadDoc("scaf");
+                  }}
+                >
                   Download Now
                 </Button>
               </Stack>
@@ -61,6 +65,30 @@ export default function Documents() {
           </Stack>
         </Card>
       </Stack>
+      <br />
+      <Card
+        direction={{ base: "column", sm: "row" }}
+        overflow="hidden"
+        variant="outline"
+        minWidth={"350px"}
+      >
+        <Stack>
+          <CardBody>
+            <Stack direction="column" spacing={5}>
+              <Heading size="md">Form A</Heading>
+              <Text>Download Form A</Text>
+              <Button
+                variant="solid"
+                colorScheme="blue"
+                width={200}
+                onClick={() => downloadDoc("FormA")}
+              >
+                Download Now
+              </Button>
+            </Stack>
+          </CardBody>
+        </Stack>
+      </Card>
     </>
   );
 }

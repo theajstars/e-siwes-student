@@ -55,6 +55,8 @@ export interface ValidateStudentAuthResponse
   };
 }
 
+export type Colleges = "COLNAS" | "COSMAS" | "COLMED";
+
 export interface Student {
   _id: string;
 
@@ -64,6 +66,7 @@ export interface Student {
   lastName: string;
   email: string;
   password: string;
+  college: Colleges;
   phone: string;
   matricNumber: string;
   supervisor: string;
@@ -167,6 +170,17 @@ export interface ReceiptsResponse extends Omit<DefaultResponse, "data"> {
   data: {
     auth: boolean;
     data: Receipt[] | [];
+    message?: string;
+  };
+}
+
+export type Course = {
+  name: string;
+};
+export interface CoursesResponse extends Omit<DefaultResponse, "data"> {
+  data: {
+    auth: boolean;
+    data: Course[] | [];
     message?: string;
   };
 }
