@@ -14,6 +14,7 @@ import Reset from "./Pages/Reset";
 import { Register } from "./Pages/Register";
 import Payments from "./Pages/Payments";
 import Documents from "./Pages/Documents";
+import Supervisor from "./Pages/Supervisor";
 
 function validateEmail(email: string) {
   const re =
@@ -29,7 +30,7 @@ const getPayStackConfig = ({ email, amount }: PaystackConfigProps) => {
     reference: new Date().getTime().toString(),
     email,
     amount,
-    publicKey: "pk_live_22766e7d447ea8ee065eb8dcc2a7c81767caec1a",
+    publicKey: "pk_live_42d86080d45e23e022da4f44d3df24e22aa204e8",
   };
   return PaystackConfig;
 };
@@ -95,6 +96,7 @@ function App() {
           <Route path="/home/profile" element={<Profile />} />
           <Route path="/home/payments" element={<Payments />} />
           <Route path="/home/documents" element={<Documents />} />
+          <Route path="/home/supervisor" element={<Supervisor />} />
           {/* <Route path="/home/supervisors" element={<Supervisors />} />
           <Route
             path="/home/supervisors/:supervisorID"

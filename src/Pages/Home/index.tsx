@@ -18,6 +18,7 @@ import Payments from "../Payments";
 import Documents from "../Documents";
 import BlockModal from "../BlockModal";
 import { Button, Input, Text, useToast } from "@chakra-ui/react";
+import Supervisor from "../Supervisor";
 
 export default function Home() {
   const navigate = useNavigate();
@@ -113,6 +114,7 @@ export default function Home() {
             <Route path="/profile" element={<Profile />} />
             <Route path="/payments" element={<Payments />} />
             <Route path="/documents" element={<Documents />} />
+            <Route path="/supervisor" element={<Supervisor />} />
             {/* <Route path="/supervisors" element={<Supervisors />} />
             <Route
               path="/supervisors/:supervisorID"

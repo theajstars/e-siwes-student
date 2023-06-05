@@ -108,6 +108,7 @@ export interface Supervisor {
   email: string;
   firstName: string;
   id: string;
+  title: string;
   isProfileComplete: boolean;
   lastName: string;
   password: string;

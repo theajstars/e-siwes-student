@@ -69,7 +69,7 @@ export default function Payments() {
   }, []);
   const config = getPayStackConfig({
     email: student?.email ?? "",
-    amount: 1000,
+    amount: 200000,
   });
 
   const handlePaymentSuccess = () => {

@@ -80,6 +80,14 @@ export default function Navbar() {
               Supervisors
             </Link> */}
             <Link
+              to="/home/supervisor"
+              className={`nav-item ${
+                activeItem === "Supervisor" ? "nav-item-active" : ""
+              }`}
+            >
+              Supervisor
+            </Link>
+            <Link
               to="/home/profile"
               className={`nav-item ${
                 activeItem === "Profile" ? "nav-item-active" : ""

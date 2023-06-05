@@ -30,5 +30,9 @@ enum Endpoints {
   GetStudentReceipts = "/student/receipts",
   ConfirmStudentPayment = "/student/payment/confirm",
   GetAvailableCourses = "/student/courses/get",
+  GetStudentSupervisor = "/student/supervisor/get",
+
+  SendSupervisorMessage = "/student/comment",
+  GetSupervisorMessages = "/student/comments/all",
 }
 export { Endpoints };
