@@ -27,3 +27,17 @@
   padding: 30px;
   width: 500px;
 }
+@media screen and (max-width: 600px) {
+  .register-form {
+    height: 600px !important;
+    width: 100% !important;
+  }
+  .register-form-row {
+    flex-direction: column !important;
+    width: 100% !important;
+  }
+  .is-register-width {
+    width: 100% !important;
+    margin: 10px 0 !important;
+  }
+}

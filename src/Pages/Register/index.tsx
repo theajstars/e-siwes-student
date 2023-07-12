@@ -149,6 +149,7 @@ export const Register = () => {
           <Text fontSize="2xl">Register</Text>
           <Stack
             direction="row"
+            className="register-form-row"
             alignItems="center"
             justifyContent="space-between"
             spacing={5}
@@ -161,12 +162,14 @@ export const Register = () => {
               onChange={(e) => {
                 SetForm({ ...Form, firstName: e.target.value });
               }}
+              className="is-register-width"
               placeholder="First Name"
               spellCheck={false}
             />
             <Input
               variant="outline"
               value={Form.lastName}
+              className="is-register-width"
               onChange={(e) => {
                 SetForm({ ...Form, lastName: e.target.value });
               }}
@@ -184,7 +187,12 @@ export const Register = () => {
             placeholder="Email"
             spellCheck={false}
           />
-          <Stack direction="row" justifyContent="space-between" spacing={5}>
+          <Stack
+            direction="row"
+            className="register-form-row"
+            justifyContent="space-between"
+            spacing={5}
+          >
             <Input
               variant="outline"
               value={Form.matricNumber}
@@ -193,10 +201,11 @@ export const Register = () => {
               onChange={(e) => {
                 SetForm({ ...Form, matricNumber: e.target.value });
               }}
+              className="is-register-width"
               placeholder="Matric Number"
               spellCheck={false}
             />
-            <InputGroup>
+            <InputGroup className="is-register-width">
               <InputLeftAddon children="+234" />
               <Input
                 variant="outline"
@@ -210,9 +219,15 @@ export const Register = () => {
               />
             </InputGroup>
           </Stack>
-          <Stack direction="row" width="100%" justifyContent="space-between">
+          <Stack
+            direction="row"
+            className="register-form-row"
+            width="100%"
+            justifyContent="space-between"
+          >
             <Input
               variant="outline"
+              className="is-register-width"
               value={Form.password}
               onChange={(e) => {
                 SetForm({ ...Form, password: e.target.value });
@@ -223,6 +238,7 @@ export const Register = () => {
             <Input
               variant="outline"
               value={Form.confirmPassword}
+              className="is-register-width"
               onChange={(e) => {
                 SetForm({ ...Form, confirmPassword: e.target.value });
               }}
